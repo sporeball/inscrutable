@@ -17,6 +17,7 @@ const sound_moveFast = new victus.Sound('assets/fast_move.wav');
 const sound_collision = new victus.Sound('assets/collision.wav');
 const sound_forceCollision = new victus.Sound('assets/force_collision.wav');
 const sound_match = new victus.Sound('assets/match.wav');
+const sound_switchOut = new victus.Sound('assets/switch_out.wav');
 
 let arrowPosition = 0;
 let debounceTimer = 0;
@@ -148,6 +149,18 @@ function poll () {
   else if (victus.keys.k) {
     shootForceful();
   }
+  // Q: red switch out
+  else if (victus.keys.q) {
+    switchOut('red');
+  }
+  // W: green switch out
+  else if (victus.keys.w) {
+    switchOut('green');
+  }
+  // E: blue switch out
+  else if (victus.keys.e) {
+    switchOut('blue');
+  }
 }
 
 /**
@@ -219,6 +232,25 @@ function shootForceful () {
   debounceTimer = 6;
   // try to make a match
   match();
+}
+
+function switchOut (color) {
+  if (debounceTimer > 0) {
+    return;
+  }
+  // change the orb
+  if (color === 'red') {
+    orbs[arrowPosition].d.src = 'assets/orb_red.png';
+  } else if (color === 'green') {
+    orbs[arrowPosition].d.src = 'assets/orb_green.png';
+  } else if (color === 'blue') {
+    orbs[arrowPosition].d.src = 'assets/orb_blue.png';
+  }
+  // play sound
+  sound_switchOut.reset();
+  sound_switchOut.play();
+  // debounce
+  debounceTimer = 6;
 }
 
 // make a match
