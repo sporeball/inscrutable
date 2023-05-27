@@ -1,0 +1,25 @@
+* {
+  margin:0;
+  border:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body {
+  margin:auto;
+  background-color:#c9bfef;
+}
+
+canvas {
+  padding:0;
+  margin:auto;
+  display:block;
+  width:288px;
+  height:288px;
+  position:absolute;
+  top:-150px;
+  bottom:0;
+  left:0;
+  right:0;
+  border:3px solid #a796e5
+}
