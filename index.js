@@ -10,6 +10,9 @@ const arrow = new victus.Sprite('assets/arrow_down.png', 96, 64, 28, 28);
 const field = Array(9).fill(undefined);
 const orbs = Array(12).fill(undefined);
 
+const sound_move = new victus.Sound('assets/move.wav');
+const sound_moveFast = new victus.Sound('assets/fast_move.wav');
+
 let arrowPosition = 0;
 let debounceTimer = 0;
 
@@ -82,9 +85,13 @@ function move (options = {}) {
   }
   if (options.fast) {
     arrowPosition += 3;
+    sound_moveFast.reset();
+    sound_moveFast.play();
   }
   else {
     arrowPosition++;
+    sound_move.reset();
+    sound_move.play();
   }
   arrowPosition %= 12;
   // update values
