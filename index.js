@@ -181,7 +181,7 @@ function move (options = {}) {
 
 // shoot
 function shoot () {
-  if (debounceTimer > 0) {
+  if (debounceTimer > 0 || matchTimer > 0) {
     return;
   }
   // affect the playfield
@@ -201,7 +201,7 @@ function shoot () {
 
 // shoot forcefully to affect the center
 function shootForceful () {
-  if (debounceTimer > 0) {
+  if (debounceTimer > 0 || matchTimer > 0) {
     return;
   }
   // must be on a square orthogonally adjacent to the center square
@@ -223,6 +223,9 @@ function shootForceful () {
 
 // make a match
 function match () {
+  if (matchTimer > 0) {
+    return;
+  }
   const validMatch = match_LUT.find(match => {
     if (match.every((square, index, array) => field[square].d.src === field[array[0]].d.src && field[square].d.src.slice(field[square].d.src.indexOf('assets')) !== 'assets/square_black.png')) {
       return true;
