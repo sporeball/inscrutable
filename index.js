@@ -26,7 +26,7 @@ let matchTimer = -1;
 
 let score = 0;
 let moves = 10;
-let time = 5;
+let time = 15;
 
 // lookup table for the player arrow
 // each element contains sprite, x and y
@@ -366,19 +366,19 @@ function addToScore (options) {
     case 'blue':
       scoreToAdd += 1000;
       movesToAdd += 10;
-      timeToAdd += 10;
+      timeToAdd += 5;
       break;
     case 'cyan':
     case 'magenta':
     case 'yellow':
       scoreToAdd += 2000;
       movesToAdd += 15;
-      timeToAdd += 15;
+      timeToAdd += 10;
       break;
     case 'white':
       scoreToAdd += 5000;
       movesToAdd += 20;
-      timeToAdd += 20;
+      timeToAdd += 15;
       break;
   }
   if (options.includesCenter) {
