@@ -186,6 +186,8 @@ function step_timer () {
   if (time < 0) {
     time = 0;
     document.getElementById('time').innerHTML = 'time: 0.0';
+    // remove arrow
+    arrow.d.src = 'assets/transparent.png';
     // play sound
     sound_gameOver.reset();
     sound_gameOver.play();
