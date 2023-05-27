@@ -19,6 +19,7 @@ const sound_forceCollision = new victus.Sound('assets/force_collision.wav');
 const sound_match = new victus.Sound('assets/match.wav');
 const sound_switchOut = new victus.Sound('assets/switch_out.wav');
 const sound_gameOver = new victus.Sound('assets/death.wav');
+const sound_restart = new victus.Sound('assets/restart.wav');
 
 let arrowPosition = 0;
 let debounceTimer = 0;
@@ -129,6 +130,20 @@ const combination_LUT = [
 
 // initialize objects before the game starts
 function init () {
+  // reset variables
+  arrowPosition = 0;
+  debounceTimer = 0;
+  matchTimer = -1;
+  score = 0;
+  moves = 10;
+  time = 15;
+  arrow.d.src = 'assets/arrow_down.png';
+  arrow.x = 96;
+  arrow.y = 64;
+  document.getElementById('score').innerHTML = 'score: 0';
+  document.getElementById('moves').innerHTML = 'moves: 10';
+  document.getElementById('time').innerHTML = 'time: 15.0';
+  document.getElementById('status').innerHTML = '&nbsp;';
   // populate playfield
   for (let i = 0; i < 9; i++) {
     field[i] = new victus.Sprite('assets/square_black.png', 96, 96, 28, 28);
@@ -175,7 +190,7 @@ function step_timer () {
     sound_gameOver.reset();
     sound_gameOver.play();
     // update UI
-    document.getElementById('status').innerHTML = `game over!`;
+    document.getElementById('status').innerHTML = `game over! space to restart`;
   }
 }
 
@@ -186,6 +201,11 @@ function poll () {
   }
   // none of the actions should work if the player has no moves or time left
   if (moves === 0 || time === 0) {
+    if (victus.keys[' ']) {
+      sound_restart.reset();
+      sound_restart.play();
+      init();
+    }
     return;
   }
   // D: move (1 square clockwise)
@@ -406,7 +426,7 @@ function useMove () {
     sound_gameOver.reset();
     sound_gameOver.play();
     // update UI
-    document.getElementById('status').innerHTML = `game over!`;
+    document.getElementById('status').innerHTML = `game over! space to restart`;
   }
 }
 
