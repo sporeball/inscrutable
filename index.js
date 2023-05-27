@@ -89,6 +89,35 @@ const match_LUT = [
   [2, 4, 6]
 ];
 
+// lookup table for color combination
+// each element contains a square path, an orb path, and the color that they combine into
+const combination_LUT = [
+  ['assets/square_black.png', 'assets/orb_red.png', 'assets/square_red.png'],
+  ['assets/square_black.png', 'assets/orb_green.png', 'assets/square_green.png'],
+  ['assets/square_black.png', 'assets/orb_blue.png', 'assets/square_blue.png'],
+  ['assets/square_red.png', 'assets/orb_red.png', 'assets/square_red.png'],
+  ['assets/square_red.png', 'assets/orb_green.png', 'assets/square_yellow.png'],
+  ['assets/square_red.png', 'assets/orb_blue.png', 'assets/square_magenta.png'],
+  ['assets/square_green.png', 'assets/orb_red.png', 'assets/square_yellow.png'],
+  ['assets/square_green.png', 'assets/orb_green.png', 'assets/square_green.png'],
+  ['assets/square_green.png', 'assets/orb_blue.png', 'assets/square_cyan.png'],
+  ['assets/square_blue.png', 'assets/orb_red.png', 'assets/square_magenta.png'],
+  ['assets/square_blue.png', 'assets/orb_green.png', 'assets/square_cyan.png'],
+  ['assets/square_blue.png', 'assets/orb_blue.png', 'assets/square_blue.png'],
+  ['assets/square_cyan.png', 'assets/orb_red.png', 'assets/square_white.png'],
+  ['assets/square_cyan.png', 'assets/orb_green.png', 'assets/square_white.png'],
+  ['assets/square_cyan.png', 'assets/orb_blue.png', 'assets/square_white.png'],
+  ['assets/square_magenta.png', 'assets/orb_red.png', 'assets/square_white.png'],
+  ['assets/square_magenta.png', 'assets/orb_green.png', 'assets/square_white.png'],
+  ['assets/square_magenta.png', 'assets/orb_blue.png', 'assets/square_white.png'],
+  ['assets/square_yellow.png', 'assets/orb_red.png', 'assets/square_white.png'],
+  ['assets/square_yellow.png', 'assets/orb_green.png', 'assets/square_white.png'],
+  ['assets/square_yellow.png', 'assets/orb_blue.png', 'assets/square_white.png'],
+  ['assets/square_white.png', 'assets/orb_red.png', 'assets/square_red.png'],
+  ['assets/square_white.png', 'assets/orb_green.png', 'assets/square_green.png'],
+  ['assets/square_white.png', 'assets/orb_blue.png', 'assets/square_blue.png'],
+];
+
 /**
  * housekeeping functions
  */
@@ -200,7 +229,7 @@ function shoot () {
   // affect the playfield
   const squareToAffect = shot_LUT[arrowPosition];
   const orb = orbs[arrowPosition];
-  field[squareToAffect].d.src = orb.d.src.replace('orb', 'square');
+  field[squareToAffect].d.src = combine(field[squareToAffect].d.src, orb.d.src);
   // change the orb
   orbs[arrowPosition].d.src = randomOrb();
   // play sound
@@ -222,7 +251,7 @@ function shootForceful () {
     return;
   }
   // affect the center square of the playfield
-  field[4].d.src = orbs[arrowPosition].d.src.replace('orb', 'square');
+  field[4].d.src = combine(field[4].d.src, orbs[arrowPosition].d.src);
   // change the orb
   orbs[arrowPosition].d.src = randomOrb();
   // play sound
@@ -232,6 +261,17 @@ function shootForceful () {
   debounceTimer = 6;
   // try to make a match
   match();
+}
+
+// combine two colors
+function combine (squarePath, orbPath) {
+  const matchingCombination = combination_LUT.find(combination => {
+    if (combination[0].slice(combination[0].indexOf('assets')) === squarePath.slice(squarePath.indexOf('assets')) && combination[1].slice(combination[1].indexOf('assets')) === orbPath.slice(orbPath.indexOf('assets'))) {
+      return true;
+    }
+    return false;
+  });
+  return matchingCombination[2];
 }
 
 function switchOut (color) {
