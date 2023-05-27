@@ -188,6 +188,8 @@ function shoot () {
   const squareToAffect = shot_LUT[arrowPosition];
   const orb = orbs[arrowPosition];
   field[squareToAffect].d.src = orb.d.src.replace('orb', 'square');
+  // change the orb
+  orbs[arrowPosition].d.src = randomOrb();
   // play sound
   sound_collision.reset();
   sound_collision.play();
@@ -208,6 +210,8 @@ function shootForceful () {
   }
   // affect the center square of the playfield
   field[4].d.src = orbs[arrowPosition].d.src.replace('orb', 'square');
+  // change the orb
+  orbs[arrowPosition].d.src = randomOrb();
   // play sound
   sound_forceCollision.reset();
   sound_forceCollision.play();
