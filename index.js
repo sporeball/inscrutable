@@ -18,12 +18,15 @@ const sound_collision = new victus.Sound('assets/collision.wav');
 const sound_forceCollision = new victus.Sound('assets/force_collision.wav');
 const sound_match = new victus.Sound('assets/match.wav');
 const sound_switchOut = new victus.Sound('assets/switch_out.wav');
+const sound_gameOver = new victus.Sound('assets/death.wav');
 
 let arrowPosition = 0;
 let debounceTimer = 0;
 let matchTimer = -1;
 
 let score = 0;
+let moves = 10;
+let time = 5;
 
 // lookup table for the player arrow
 // each element contains sprite, x and y
@@ -141,7 +144,7 @@ function init () {
   }
 }
 
-function step_timers() {
+function step_frame_timers () {
   if (debounceTimer > 0) {
     debounceTimer--;
   }
@@ -159,9 +162,27 @@ function step_timers() {
   }
 }
 
+function step_timer () {
+  if (moves === 0 || time === 0) {
+    return;
+  }
+  time -= 1 / 60;
+  document.getElementById('time').innerHTML = `time: ${time.toFixed(1)}`;
+  if (time < 0) {
+    time = 0;
+    document.getElementById('time').innerHTML = 'time: 0.0';
+    sound_gameOver.reset();
+    sound_gameOver.play();
+  }
+}
+
 function poll () {
   // shift causes repeated actions and should be ignored
   if (victus.keys.Shift) {
+    return;
+  }
+  // none of the actions should work if the player has no moves or time left
+  if (moves === 0 || time === 0) {
     return;
   }
   // D: move (1 square clockwise)
@@ -221,6 +242,8 @@ function move (options = {}) {
   arrow.y = y;
   // debounce
   debounceTimer = 6;
+  // this action costs a move
+  useMove();
 }
 
 // shoot
@@ -241,6 +264,8 @@ function shoot () {
   debounceTimer = 6;
   // try to make a match
   match();
+  // this action costs a move
+  useMove();
 }
 
 // shoot forcefully to affect the center
@@ -263,6 +288,8 @@ function shootForceful () {
   debounceTimer = 6;
   // try to make a match
   match();
+  // this action costs a move
+  useMove();
 }
 
 // combine two colors
@@ -293,6 +320,8 @@ function switchOut (color) {
   sound_switchOut.play();
   // debounce
   debounceTimer = 6;
+  // this action costs a move
+  useMove();
 }
 
 // make a match
@@ -325,29 +354,57 @@ function match () {
 
 // add to the player's score based on what color they matched
 // and whether the match includes the center of the playfield
+// this will also add to their number of remaining moves
 function addToScore (options) {
   let scoreToAdd = 0;
+  let movesToAdd = 0;
+  let timeToAdd = 0;
   const color = options.color.slice(options.color.indexOf('_') + 1, -4);
   switch (color) {
     case 'red':
     case 'green':
     case 'blue':
       scoreToAdd += 1000;
+      movesToAdd += 10;
+      timeToAdd += 10;
       break;
     case 'cyan':
     case 'magenta':
     case 'yellow':
       scoreToAdd += 2000;
+      movesToAdd += 15;
+      timeToAdd += 15;
       break;
     case 'white':
       scoreToAdd += 5000;
+      movesToAdd += 20;
+      timeToAdd += 20;
       break;
   }
   if (options.includesCenter) {
     scoreToAdd += 500;
+    movesToAdd += 5;
+    timeToAdd += 5;
   }
   score += scoreToAdd;
+  moves += movesToAdd;
+  time += timeToAdd;
   document.getElementById('score').innerHTML = `score: ${score}`;
+}
+
+function useMove () {
+  moves--;
+  document.getElementById('moves').innerHTML = `moves: ${moves}`;
+  // end the game if there are no moves remaining
+  if (moves === 0) {
+    // remove arrow
+    arrow.d.src = 'assets/transparent.png';
+    // play sound
+    sound_gameOver.reset();
+    sound_gameOver.play();
+    // update UI
+    document.getElementById('status').innerHTML = `game over!`;
+  }
 }
 
 /**
@@ -380,7 +437,8 @@ function draw () {
 
 function main () {
   victus.clear();
-  step_timers();
+  step_frame_timers();
+  step_timer();
   poll();
   draw();
   window.requestAnimationFrame(main);
