@@ -171,8 +171,11 @@ function step_timer () {
   if (time < 0) {
     time = 0;
     document.getElementById('time').innerHTML = 'time: 0.0';
+    // play sound
     sound_gameOver.reset();
     sound_gameOver.play();
+    // update UI
+    document.getElementById('status').innerHTML = `game over!`;
   }
 }
 
