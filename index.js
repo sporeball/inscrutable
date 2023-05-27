@@ -23,6 +23,8 @@ let arrowPosition = 0;
 let debounceTimer = 0;
 let matchTimer = -1;
 
+let score = 0;
+
 // lookup table for the player arrow
 // each element contains sprite, x and y
 const arrow_LUT = [
@@ -309,12 +311,43 @@ function match () {
   }
   // set the match
   lastMatch = validMatch;
+  // add to score
+  const color = field[validMatch[0]].d.src.slice(field[validMatch[0]].d.src.indexOf('assets'));
+  const includesCenter = validMatch.includes(4);
+  addToScore({ color, includesCenter });
   // play sound
   sound_match.reset();
   sound_match.play();
   // start match timer
   // the match will stick around for this many frames
   matchTimer = 24;
+}
+
+// add to the player's score based on what color they matched
+// and whether the match includes the center of the playfield
+function addToScore (options) {
+  let scoreToAdd = 0;
+  const color = options.color.slice(options.color.indexOf('_') + 1, -4);
+  switch (color) {
+    case 'red':
+    case 'green':
+    case 'blue':
+      scoreToAdd += 1000;
+      break;
+    case 'cyan':
+    case 'magenta':
+    case 'yellow':
+      scoreToAdd += 2000;
+      break;
+    case 'white':
+      scoreToAdd += 5000;
+      break;
+  }
+  if (options.includesCenter) {
+    scoreToAdd += 500;
+  }
+  score += scoreToAdd;
+  document.getElementById('score').innerHTML = `score: ${score}`;
 }
 
 /**
